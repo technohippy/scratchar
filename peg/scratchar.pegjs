@@ -2,18 +2,57 @@ start
  = program
 
 program
- = br blocks
- / blocks
+ = br cs:codes {
+     return cs
+   }
+ / cs:codes {
+     return cs
+   }
 
-blocks
- = block br blocks
- / declare br blocks
- / block br
- / declare br
+codes
+ = c:code br cs:codes {
+     cs.unshift(c)
+     return cs
+   }
+ / c:code {
+     return [c]
+   }
 
-block
- = start_block
- / end_block
+code
+ = br s:start_block br bs:body_blocks {
+     bs.unshift(s)
+     return bs
+   }
+ / br d:declare br bs:body_blocks {
+     bs.unshift(d)
+     return bs
+   }
+ / s:start_block br bs:body_blocks {
+     bs.unshift(s)
+     return bs
+   }
+ / d:declare br bs:body_blocks {
+     bs.unshift(d)
+     return bs
+   }
+ / s:start_block br {
+     return [s]
+   }
+ / d:declare br {
+     return [d]
+   }
+
+body_blocks
+ = b:body_block br bs:body_blocks {
+     bs.unshift(b)
+     return bs
+   }
+ / b:body_block br {
+     return [b]
+   }
+
+body_block
+ = end_block
  / middle_block
  / end_paren_block
  / middle_paren_block
@@ -51,7 +90,7 @@ paren_contents
  / paren_first_contents
 
 paren_first_contents
- = [^|:\n]+
+ = contents:[^|:\n]+ { return contents }
 
 middle_blocks
  = middle_block br middle_blocks

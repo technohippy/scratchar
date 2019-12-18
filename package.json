@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "peg": "pegjs -o src/scratchar-parser.js peg/scratchar.pegjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "pegjs -o src/scratchar-parser.js peg/scratchar.pegjs & node src/scratchar.js"
   },
   "repository": {
     "type": "git",
