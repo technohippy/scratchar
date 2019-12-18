@@ -1,0 +1,19 @@
+{
+  "name": "scratchar",
+  "version": "0.0.1",
+  "description": "Text Format for Scratch Blocks",
+  "main": "index.js",
+  "scripts": {
+    "peg": "pegjs -o src/scratchar-parser.js peg/scratchar.pegjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/technohippy/scratchar"
+  },
+  "keywords": [
+    "scratch"
+  ],
+  "author": "ANDO Yasushi",
+  "license": "MIT"
+}

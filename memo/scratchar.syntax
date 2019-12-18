@@ -1,0 +1,167 @@
+BLOCKS
+====
+
+Motion
+----
+
+:|move (10) steps|
+
+:|turn right (15) degrees|
+
+:|turn left (15) degrees|
+
+:|go to (*random position*)|
+
+:|go to x: (0) y: (0)|
+
+:|set rotation style [*left right*]|
+
+(X POSITION)
+
+(Y POSITION)
+
+(Z POSITION)
+
+Looks
+----
+
+:|say (Hello!) for (2) seconds|
+
+:|switch costume to (*costume2*)|
+
+:|change [*color*] effect by (25)|
+
+(costume [*number*])
+
+Sound
+----
+
+Events
+----
+
+^|when FLAG clicked|
+
+^|when [*space*] key pressed|
+
+^|when [*loundness*] > (10)|
+
+:|broadcast (*message1*)|
+
+Control
+----
+
+:|wait (1) seconds|
+
+:{repeat (10)
+:}
+
+:{forever
+_}
+
+_|stop [*all*]|
+
+Sensing
+----
+
+Operators
+----
+
+Variables
+----
+
+~|make a variable ()|
+
+~|make a list ()|
+
+My Blocks
+----
+
+~|make a block |position (x) (y)||
+
+Sample
+====
+
+https://scratch.mit.edu/projects/351018410/editor/
+
+% info
+
+^|when FLAG clicked|
+:|go to x: (0) y: (0)|
+:|show|
+
+% Worm
+
+^|when FLAG clicked|
+:|set [*TYPE*] to (1)|
+_{forever
+::|set [*last type*] to (TYPE)|
+::|broadcast (*clear*) and wait|
+::|setup|
+::{repeat until <not <(TYPE) = (last type)>>
+:::|broadcast (*first*)|
+:::|broadcast (*tick*)|
+::}
+_}
+
+^|when I receive [*clear*]|
+_|delete this clone|
+
+~|make a block |setup||
+:|show|
+:{if <(TYPE) = (1)> then
+::|Setup Cat|
+:}
+:{if <(TYPE) = (2)> then
+::|Setup Dragon|
+:}
+:{if <(TYPE) = (3)> then
+::|Setup Cater|
+:}
+
+~|make a block |Setup Cat||
+:|set [*SPACING*] to (10)|
+:|set [*SCROLL X*] to (0)|
+:|set [*BOUNDED*] to (1)|
+:|set size to (20) %|
+:|switch costume to (*Cat*)|
+:|set [*id*] to (0)|
+:{repeat (120)
+::|go to (*random position*)|
+::|create clone of (*myself*)|
+::|change [*color*] effect by (10)|
+::|change [*id*] by (1)|
+:}
+
+~|make a block |Setup Eater||
+:|set [*SPACING*] to (30)|
+:|set [*SCROLL X*] to (0)|
+:|set [*BOUNDED*] to (0)|
+:|set size to (100) %|
+:|switch costume to (*Eater3*)|
+:|set [*id*] to (0)|
+:|create clone of (*myself*)|
+:|switch costume to (*Eater2*)|
+:{repeat (60)
+::|go to (*random position*)|
+::|create clone of (*myself*)|
+:}
+:|switch costume to (*Eater1*)|
+
+~|make a block |Setup Dragon||
+:|set [*SPACING*] to (6)|
+:|set [*SCROLL X*] to (1)|
+:|set [*BOUNDED*] to (0)|
+:|set [*id*] to (0)|
+:|set size to (65) %|
+:|switch costume to (*costume3*)|
+:{repeat (5)
+::{repeat (5)
+:::|goto (*random position*)|
+:::|create clone of (*myself*)|
+::}
+::|next costume|
+:}
+:{repeat (1)
+::{repeat (2)
+::}
+:}
