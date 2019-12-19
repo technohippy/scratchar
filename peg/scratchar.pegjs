@@ -58,13 +58,16 @@ body_block
  / middle_paren_block
  
 start_block
- = "^" "|" block_contents "|"
+ = "^" "|" expressions "|"
  
 middle_block
+/*
+ = ":"+ "|" expressions "|"
+*/
  = ":"+ "|" block_contents "|"
  
 end_block
- = "_" "|" block_contents "|"
+ = "_" "|" expressions "|"
 
 middle_paren_block
  = ":"+ "{" paren_contents ":"+ "}"
@@ -110,6 +113,55 @@ declare_block_first_contents
 
 declare_var_contents
  = [^|]+
+
+option
+ = "[*" words "*]"
+
+option_var
+ = "(*" words "*)"
+
+var
+ = "(" expressions")"
+
+bool_var
+ = "<" expressions ">"
+
+words
+ = w:word spaces ws:words {
+     ws.unshift(w)
+     return ws
+   }
+ / w:word {
+     return [w]
+   }
+
+word
+ = [^ |\[\]\()]+
+
+expressions
+ = e:expression spaces es:expressions {
+     es.unshift(e)
+     console.log(es)
+     return es
+   }
+ / e:expression {
+     return [e]
+   }
+
+expression
+ = word
+ / option
+ / option_var
+ / var
+ / bool_var
+
+spaces
+ = space
+ / space spaces
+
+space
+ = " "
+ / "\t"
 
 br
  = [\n]*

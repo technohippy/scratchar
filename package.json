@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "peg": "pegjs -o src/scratchar-parser.js peg/scratchar.pegjs",
-    "test": "pegjs -o src/scratchar-parser.js peg/scratchar.pegjs & node src/scratchar.js"
+    "test": "pegjs -o src/scratchar-parser.js peg/scratchar.pegjs; node src/scratchar.js"
   },
   "repository": {
     "type": "git",
