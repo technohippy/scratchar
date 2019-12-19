@@ -61,10 +61,7 @@ start_block
  = "^" "|" expressions "|"
  
 middle_block
-/*
  = ":"+ "|" expressions "|"
-*/
- = ":"+ "|" block_contents "|"
  
 end_block
  = "_" "|" expressions "|"
@@ -84,9 +81,6 @@ declare_block
 
 declare_var
  = "~" "|" declare_var_contents "|"
-
-block_contents
- = [^|]+
 
 paren_contents
  = paren_first_contents br middle_blocks br
@@ -127,7 +121,7 @@ bool_var
  = "<" expressions ">"
 
 words
- = w:word spaces ws:words {
+ = w:word ws:words {
      ws.unshift(w)
      return ws
    }
@@ -136,10 +130,10 @@ words
    }
 
 word
- = [^ |\[\]\()]+
+ = [^|\[\]\()*]+
 
 expressions
- = e:expression spaces es:expressions {
+ = e:expression es:expressions {
      es.unshift(e)
      console.log(es)
      return es
