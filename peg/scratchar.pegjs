@@ -1,12 +1,41 @@
+{
+  class ProgramNode {
+    constructor(codes=[]) {
+      this.codes = codes
+    }
+  }
+
+  class CodeNode {
+    constructor(blocks=[]) {
+      this.blocks = blocks
+    }
+  }
+
+  class BlockNode {
+    constructor(signature=[]) {
+      this.signature = signature
+    }
+  }
+
+  class ParenBlockNode extends BlockNode {
+    constructor(children=[]) {
+      this.children = children
+    }
+  }
+
+  class DeclareNode {
+  }
+}
+
 start
  = program
 
 program
  = br cs:codes {
-     return cs
+     return new ProgramNode(cs)
    }
  / cs:codes {
-     return cs
+     return new ProgramNode(cs)
    }
 
 codes
@@ -21,25 +50,25 @@ codes
 code
  = br s:start_block br bs:body_blocks {
      bs.unshift(s)
-     return bs
+     return new CodeNode(bs)
    }
  / br d:declare br bs:body_blocks {
      bs.unshift(d)
-     return bs
+     return new CodeNode(bs)
    }
  / s:start_block br bs:body_blocks {
      bs.unshift(s)
-     return bs
+     return new CodeNode(bs)
    }
  / d:declare br bs:body_blocks {
      bs.unshift(d)
-     return bs
+     return new CodeNode(bs)
    }
  / s:start_block br {
-     return [s]
+     return new CodeNode([s])
    }
  / d:declare br {
-     return [d]
+     return new CodeNode([d])
    }
 
 body_blocks
@@ -76,18 +105,30 @@ declare
  = declare_block
  / declare_var
 
+/*
 declare_block
  = "~" "|" declare_block_contents "|"
+*/
+
+declare_block
+ = "~" "|" expressions "|" expressions "|" "|"
 
 declare_var
  = "~" "|" declare_var_contents "|"
 
+/*
 paren_contents
  = paren_first_contents br middle_blocks br
  / paren_first_contents
+*/
+paren_contents
+ = expressions br middle_blocks br
+ / expressions
 
 paren_first_contents
- = contents:[^|:\n]+ { return contents }
+ = c:[^|:\n]+ {
+     return c.join("") 
+   }
 
 middle_blocks
  = middle_block br middle_blocks
@@ -130,12 +171,13 @@ words
    }
 
 word
- = [^|\[\]\()*]+
+ = w:[^|\[\]\()*\n]+ { 
+     return w.join("")
+   }
 
 expressions
  = e:expression es:expressions {
      es.unshift(e)
-     console.log(es)
      return es
    }
  / e:expression {
@@ -144,6 +186,27 @@ expressions
 
 expression
  = word
+ / option
+ / option_var
+ / var
+ / bool_var
+
+paren_word
+ = w:[^:|\[\]\()*\n]+ { 
+     return w.join("")
+   }
+
+paren_expressions
+ = e:paren_expression es:paren_expressions {
+     es.unshift(e)
+     return es
+   }
+ / e:paren_expression {
+     return [e]
+   }
+
+paren_expression
+ = paren_word
  / option
  / option_var
  / var

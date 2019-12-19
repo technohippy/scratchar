@@ -36,7 +36,7 @@ _}
 ::}
 :}
 `)
-console.log(tree)
+console.log(JSON.stringify(tree, "", "  "))
 
 /*
 let tree = parser.parse(`
