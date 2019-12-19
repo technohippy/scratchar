@@ -25,6 +25,30 @@
 
   class DeclareNode {
   }
+
+  class VarNode {
+    constructor(expressions=[]) {
+      this.expressions = expressions
+    }
+  }
+
+  class BoolVarNode {
+    constructor(expressions=[]) {
+      this.expressions = expressions
+    }
+  }
+
+  class OptionNode {
+    constructor(val) {
+      this.value = val
+    }
+  }
+
+  class OptionVarNode {
+    constructor(val) {
+      this.value = val
+    }
+  }
 }
 
 start
@@ -131,11 +155,23 @@ paren_first_contents
    }
 
 middle_blocks
- = middle_block br middle_blocks
- / middle_paren_block br middle_blocks
- / middle_block br
- / middle_paren_block br
- / br
+ = b:middle_block br bs:middle_blocks {
+     bs.unshift(b)
+     return bs
+   }
+ / b:middle_paren_block br bs:middle_blocks {
+     bs.unshift(b)
+     return bs
+   }
+ / b:middle_block br {
+     return [b]
+   }
+ / b:middle_paren_block br {
+     return [b]
+   }
+ / br {
+     return []
+   }
 
 declare_block_contents
  = declare_block_first_contents "|" declare_block_sig "|"
@@ -150,16 +186,24 @@ declare_var_contents
  = [^|]+
 
 option
- = "[*" words "*]"
+ = "[*" w:word "*]" {
+     return new OptionNode(w)
+   }
 
 option_var
- = "(*" words "*)"
+ = "(*" w:word "*)" {
+     return new OptionVarNode(w)
+   }
 
 var
- = "(" expressions")"
+ = "(" es:expressions")" {
+     return new VarNode(es)
+   }
 
 bool_var
- = "<" expressions ">"
+ = "<" expressions ">" {
+     return new BoolVarNode(es)
+   }
 
 words
  = w:word ws:words {
