@@ -28,7 +28,12 @@
     }
   }
 
-  class DeclareNode {
+  class DeclareBlockNode {
+    constructor(expressions=[], signatures=[]) {
+      this.type = "declare_block"
+      this.expressions = expressions
+      this.signatures = signatures
+    }
   }
 
   class VarNode {
@@ -151,16 +156,18 @@ declare
  / declare_var
 
 declare_block
- = "~" "|" expressions "|" expressions "|" "|"
+ = "~" "|" es:expressions "|" ss:expressions "|" "|" {
+     return new DeclareBlockNode(es, ss)
+   }
 
 declare_var
  = "~" "|" declare_var_contents "|"
 
 paren_contents
- = es:expressions br bs:middle_blocks br {
+ = es:paren_expressions br bs:middle_blocks br {
      return new ParenBlockNode("", es, bs)
    }
- / es:expressions {
+ / es:paren_expressions {
      return new ParenBlockNode("", es)
    }
 
@@ -211,12 +218,12 @@ option_var
    }
 
 var
- = "(" es:expressions")" {
+ = "(" es:paren_expressions")" {
      return new VarNode(es)
    }
 
 bool_var
- = "<" expressions ">" {
+ = "<" es:paren_expressions ">" {
      return new BoolVarNode(es)
    }
 
@@ -251,7 +258,7 @@ expression
  / bool_var
 
 paren_word
- = w:[^:|\[\]\()*\n]+ { 
+ = w:[^:|\[\]\()<>*\n]+ { 
      return w.join("")
    }
 
@@ -265,11 +272,11 @@ paren_expressions
    }
 
 paren_expression
- = paren_word
- / option
+ = option
  / option_var
  / var
  / bool_var
+ / paren_word
 
 spaces
  = space
