@@ -1,24 +1,29 @@
 {
   class ProgramNode {
     constructor(codes=[]) {
+      this.type = "program"
       this.codes = codes
     }
   }
 
   class CodeNode {
     constructor(blocks=[]) {
+      this.type = "code"
       this.blocks = blocks
     }
   }
 
   class BlockNode {
-    constructor(signature=[]) {
-      this.signature = signature
+    constructor(type, expressions=[]) {
+      this.type = `${type}_block`
+      this.expressions = expressions
     }
   }
 
-  class ParenBlockNode extends BlockNode {
-    constructor(children=[]) {
+  class ParenBlockNode {
+    constructor(type, expressions=[], children=[]) {
+      this.type = `${type}_paren_block`
+      this.expressions = expressions
       this.children = children
     }
   }
@@ -28,24 +33,28 @@
 
   class VarNode {
     constructor(expressions=[]) {
+      this.type = "var"
       this.expressions = expressions
     }
   }
 
   class BoolVarNode {
     constructor(expressions=[]) {
+      this.type = "bool_var"
       this.expressions = expressions
     }
   }
 
   class OptionNode {
     constructor(val) {
+      this.type = "option"
       this.value = val
     }
   }
 
   class OptionVarNode {
     constructor(val) {
+      this.type = "option_var"
       this.value = val
     }
   }
@@ -111,28 +120,35 @@ body_block
  / middle_paren_block
  
 start_block
- = "^" "|" expressions "|"
+ = "^" "|" es:expressions "|" {
+     return new BlockNode("start", es)
+   }
  
 middle_block
- = ":"+ "|" expressions "|"
+ = ":"+ "|" es:expressions "|" {
+     return new BlockNode("middle", es)
+   }
  
 end_block
- = "_" "|" expressions "|"
+ = "_" "|" es:expressions "|" {
+     return new BlockNode("end", es)
+   }
 
 middle_paren_block
- = ":"+ "{" paren_contents ":"+ "}"
+ = ":"+ "{" pc:paren_contents ":"+ "}" {
+     pc.type = "middle_parent_block"
+     return pc
+   }
 
 end_paren_block
- = ":"+ "{" paren_contents "_" "}"
+ = ":"+ "{" pc:paren_contents "_" "}" {
+     pc.type = "end_parent_block"
+     return pc
+   }
 
 declare
  = declare_block
  / declare_var
-
-/*
-declare_block
- = "~" "|" declare_block_contents "|"
-*/
 
 declare_block
  = "~" "|" expressions "|" expressions "|" "|"
@@ -140,14 +156,13 @@ declare_block
 declare_var
  = "~" "|" declare_var_contents "|"
 
-/*
 paren_contents
- = paren_first_contents br middle_blocks br
- / paren_first_contents
-*/
-paren_contents
- = expressions br middle_blocks br
- / expressions
+ = es:expressions br bs:middle_blocks br {
+     return new ParenBlockNode("", es, bs)
+   }
+ / es:expressions {
+     return new ParenBlockNode("", es)
+   }
 
 paren_first_contents
  = c:[^|:\n]+ {
