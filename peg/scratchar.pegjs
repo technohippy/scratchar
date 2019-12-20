@@ -1,8 +1,18 @@
 {
+  let indentUnit = ":"
+
+  function arrToStr(arr, indent="", glue="") {
+    return arr.map(e => e.toString(indent)).join(glue)
+  }
+
   class ProgramNode {
     constructor(codes=[]) {
       this.type = "program"
       this.codes = codes
+    }
+
+    toString(indent="") {
+      return arrToStr(this.codes, indent, "\n\n")
     }
   }
 
@@ -11,12 +21,21 @@
       this.type = "code"
       this.blocks = blocks
     }
+
+    toString(indent="") {
+      return arrToStr(this.blocks, indent, "\n")
+    }
   }
 
   class BlockNode {
     constructor(type, expressions=[]) {
       this.type = `${type}_block`
       this.expressions = expressions
+    }
+
+    toString(indent="") {
+      const prefix = {start_block:"^", middle_block:":", end_block:"_"}[this.type]
+      return `${indent}${prefix}|${arrToStr(this.expressions)}|`
     }
   }
 
@@ -26,6 +45,16 @@
       this.expressions = expressions
       this.children = children
     }
+
+    toString(indent="") {
+      const suffix = {middle_paren_block:":", end_paren_block:"_"}[this.type]
+      let ret = `${indent}:{${arrToStr(this.expressions)}\n`
+      for (let c of this.children) {
+        ret += `${c.toString(indent + indentUnit)}\n`
+      }
+      ret += `${indent}${suffix}}`
+      return ret
+    }
   }
 
   class DeclareBlockNode {
@@ -34,12 +63,20 @@
       this.expressions = expressions
       this.signatures = signatures
     }
+
+    toString(indent="") {
+      return `${indent}~|${arrToStr(this.expressions)}|${arrToStr(this.signatures)}||`
+    }
   }
 
   class VarNode {
     constructor(expressions=[]) {
       this.type = "var"
       this.expressions = expressions
+    }
+
+    toString(indent="") {
+      return `(${arrToStr(this.expressions)})`
     }
   }
 
@@ -48,6 +85,10 @@
       this.type = "bool_var"
       this.expressions = expressions
     }
+
+    toString(indent="") {
+      return `<${arrToStr(this.expressions)}>`
+    }
   }
 
   class OptionNode {
@@ -55,12 +96,20 @@
       this.type = "option"
       this.value = val
     }
+
+    toString(indent="") {
+      return `[*${this.value}*]`
+    }
   }
 
   class OptionVarNode {
     constructor(val) {
       this.type = "option_var"
       this.value = val
+    }
+
+    toString(indent="") {
+      return `(*${this.value}*)`
     }
   }
 }
@@ -141,13 +190,13 @@ end_block
 
 middle_paren_block
  = ":"+ "{" pc:paren_contents ":"+ "}" {
-     pc.type = "middle_parent_block"
+     pc.type = "middle_paren_block"
      return pc
    }
 
 end_paren_block
  = ":"+ "{" pc:paren_contents "_" "}" {
-     pc.type = "end_parent_block"
+     pc.type = "end_paren_block"
      return pc
    }
 

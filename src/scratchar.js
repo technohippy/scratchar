@@ -37,6 +37,7 @@ _}
 :}
 `)
 console.log(JSON.stringify(tree, "", "  "))
+console.log(tree.toString())
 
 /*
 let tree = parser.parse(`
