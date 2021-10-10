@@ -36,7 +36,7 @@ _}
 ::}
 :}
 `)
-console.log(JSON.stringify(tree, "", "  "))
+//console.log(JSON.stringify(tree, "", "  "))
 console.log(tree.toString())
 
 /*

@@ -1,0 +1,18 @@
+workspace = Blockly.getMainWorkspace() // コード配置エリア
+  workspace.getBlockById("motion_glideto")
+toolbox = workspace.getToolbox() // 左端のメニュー
+category = toolbox.getCategoryByIndex(0)
+blocks = category.getContents()
+
+canvas = workspace.getCanvas() // 編集エリア
+  canvas.appendChild(workspace.getBlockById("motion_glideto").getSvgRoot())
+
+
+flyout = workspace.getFlyout() // ブロック一覧
+flyoutWorkspace = flyout.getWorkspace() // ブロック一覧の本体？
+  flyoutWorkspace.getAllBlocks()
+  flyoutWorkspace.getAllVariables()
+  flyoutWorkspace.createVariable()
+workspace.addTopBlock(flyoutWorkspace.getAllBlocks()[0])
+
+toolbox.getSelectedItem().getContents() // ブロック一覧？

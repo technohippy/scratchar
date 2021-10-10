@@ -1954,7 +1954,7 @@ function peg$parse(input, options) {
   }
 
 
-    const indentUnit = ":"
+    let indentUnit = ":"
 
     function arrToStr(arr, indent="", glue="") {
       return arr.map(e => e.toString(indent)).join(glue)
